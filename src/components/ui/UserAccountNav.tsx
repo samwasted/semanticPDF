@@ -1,18 +1,20 @@
+// components/UserAccountNav.tsx
 "use client"
 
+import React, { useState, useEffect } from "react"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./dropdown-menu"
-import { Button } from "./button"
-import { Avatar, AvatarImage, AvatarFallback } from "./avatar"
-import Link from "next/link"
-import { Gem } from "lucide-react"
-import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components"
-import { Icons } from "./Icons"
+} from "./dropdown-menu"  // Shadcn UI dropdown components [1]
+import { Button } from "./button"               // Shadcn Button component [1]
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar"  // Shadcn Avatar primitives [2]
+import Link from "next/link"                    // Next.js Link component [3]
+import { Gem } from "lucide-react"              // Icon component [4]
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components"  // Kinde logout UI [5]
+import { Icons } from "./Icons"                // Custom icon set [1]
 
 interface UserAccountNavProps {
   email?: string
@@ -25,26 +27,44 @@ export default function UserAccountNav({
   name,
   imageUrl,
 }: UserAccountNavProps) {
-  const getUserInitials = (fullName: string) =>
-    fullName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+  // Generate user initials
+  const getInitials = (fullName: string) =>
+    fullName
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2)
 
-  const avatarKey = imageUrl || "no-image"
+  // Track image load status manually
+  const [isLoaded, setIsLoaded] = useState(false)
+  useEffect(() => {
+    if (!imageUrl) {
+      setIsLoaded(false)
+      return
+    }
+    const img = new Image()
+    img.src = imageUrl
+    img.onload = () => setIsLoaded(true)
+    img.onerror = () => setIsLoaded(false)
+  }, [imageUrl])
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="overflow-visible">
         <Button className="rounded-full h-8 w-8 bg-slate-400">
-          <Avatar key={avatarKey} className="w-8 h-8">
-            {imageUrl && (
+          <Avatar className="w-8 h-8">
+            {/* Render image only when loaded */}
+            {isLoaded ? (
               <AvatarImage
-                key={avatarKey}
-                src={imageUrl}
+                src={imageUrl!}
                 alt={`${name}'s avatar`}
                 className="object-cover w-full h-full"
               />
-            )}
-            <AvatarFallback delayMs={0} className="bg-slate-300 text-xs font-medium">
-              {getUserInitials(name)}
+            ) : null}
+            {/* Always render fallback */}
+            <AvatarFallback className="bg-slate-300 text-xs font-medium text-slate-700">
+              {getInitials(name)}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -54,7 +74,9 @@ export default function UserAccountNav({
         <div className="p-2 flex items-center gap-2">
           <div className="flex flex-col leading-none">
             <p className="font-medium text-sm text-black">{name}</p>
-            {email && <p className="truncate text-xs text-zinc-700 w-48">{email}</p>}
+            {email && (
+              <p className="truncate text-xs text-zinc-700 w-48">{email}</p>
+            )}
           </div>
         </div>
 
@@ -72,7 +94,7 @@ export default function UserAccountNav({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer">
           <LogoutLink>Log out</LogoutLink>
         </DropdownMenuItem>
       </DropdownMenuContent>
