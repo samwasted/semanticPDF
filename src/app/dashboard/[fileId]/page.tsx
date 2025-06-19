@@ -12,7 +12,7 @@ interface PageProps {
 
 const Page = async function ({ params }: PageProps) {
     // Retrieve the file Id
-    const { fileId } = await params
+    const { fileId } = params
     
     // Get user
     const { getUser } = getKindeServerSession()
