@@ -6,47 +6,48 @@ import {
   DropdownMenuTrigger,
 } from './dropdown-menu'
 import { Button } from './button'
-import { Avatar, AvatarFallback } from './avatar'
-import Image from 'next/image'
-import { Icons } from './Icons'
+import { Avatar, AvatarFallback, AvatarImage } from './avatar'
 import Link from 'next/link'
 import { Gem } from 'lucide-react'
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/server'
+import { Icons } from './Icons'
 
 interface UserAccountNavProps {
   email: string | undefined
   name: string
-  imageUrl: string
+  imageUrl: string | undefined // Made explicitly optional
 }
 
-const UserAccountNav = async ({
+const UserAccountNav = ({
   email,
   imageUrl,
   name,
 }: UserAccountNavProps) => {
+  // Helper function to get user initials
+  const getUserInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  }
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        asChild
-        className='overflow-visible'>
+      <DropdownMenuTrigger asChild className='overflow-visible'>
         <Button className='rounded-full h-8 w-8 aspect-square bg-slate-400'>
           <Avatar className='relative w-8 h-8'>
-            {imageUrl ? (
-              <div className='relative aspect-square h-full w-full'>
-                <Image
-                  fill
-                  src={imageUrl}
-                  alt='profile picture'
-                  referrerPolicy='no-referrer'
-                />
-              </div>
-            ) : (
-              <AvatarFallback>
-                <span className='sr-only'>{name}</span>
-                <Icons.user className='h-4 w-4 text-zinc-900' />
-              </AvatarFallback>
-            )}
+            {/* Always render AvatarImage with conditional src */}
+            <AvatarImage 
+              src={imageUrl || ''} 
+              alt={`${name}'s profile picture`}
+              className='object-cover'
+            />
+            {/* Fallback renders when image fails to load */}
+            <AvatarFallback className='bg-slate-300 text-slate-700 text-xs font-medium'>
+              {name ? getUserInitials(name) : <Icons.user className='h-4 w-4 text-zinc-900' />}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -74,16 +75,16 @@ const UserAccountNav = async ({
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild> 
-            <Link href='/pricing'>
-              Upgrade{' '}
-              <Gem className='text-blue-600 h-4 w-4 ml-1.5' />
-            </Link>
+          <Link href='/pricing'>
+            Upgrade{' '}
+            <Gem className='text-blue-600 h-4 w-4 ml-1.5' />
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
         <DropdownMenuItem className='cursor-pointer'>
-            <LogoutLink>Log out</LogoutLink>
+          <LogoutLink>Log out</LogoutLink>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
