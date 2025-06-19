@@ -1,12 +1,34 @@
-import type { NextConfig } from "next";
-import { webpack } from "next/dist/compiled/webpack/webpack";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/sign-in',
+        destination: '/api/auth/login',
+        permanent: true,
+      },
+      {
+        source: '/sign-up',
+        destination: '/api/auth/register',
+        permanent: true,
+      },
+    ]
+  },
 
-const nextConfig: NextConfig = {
-  webpack: (config, {buildId, dev, isServer, defaultLoaders, webpack}) => {
+  webpack: (
+    config: { resolve: { alias: { canvas: boolean; encoding: boolean } } },
+    { buildId, dev, isServer, defaultLoaders, webpack }: any
+  ) => {
     config.resolve.alias.canvas = false
     config.resolve.alias.encoding = false
     return config
-  }
-};
+  },
+  
+}
 
-export default nextConfig;
+module.exports = nextConfig
+module.exports = {
+  images: {
+    domains: ['images.app.goo.gl'],
+  },
+}
