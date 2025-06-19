@@ -21,10 +21,10 @@ model User {
   File File[]
   Message Message[]
 
-  stripeCustomerId String? @unique @map(name: "stripe_customer_id")
-  stripeSubscriptionId String? @unique @map(name: "stripe_subscription_id")
-  stripePriceId String? @unique @map(name: "stripe_price_id")
-  stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
+  CustomerId String? @unique @map(name: "customer_id")
+  SubscriptionId String? @unique @map(name: "subscription_id")
+  PriceId String? @unique @map(name: "price_id")
+  CurrentPeriodEnd DateTime? @map(name: "current_period_end")
 }
 
 enum UploadStatus {

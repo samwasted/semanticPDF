@@ -75,7 +75,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
 
   console.log(errors)
 
-  const { width, ref } = useResizeDetector()
+  const { width, ref, height } = useResizeDetector()
 
   const handlePageSubmit = ({
     page,
@@ -85,7 +85,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   }
 
   return (
-    <div className='h-full bg-white rounded-md shadow flex flex-col items-center'>
+    <div className='max-h-full bg-white rounded-md shadow flex flex-col items-center'>
       <div className='h-14 w-full border-b border-zinc-200 flex items-center justify-between px-2'>
         <div className='flex items-center gap-1.5'>
           <Button
@@ -182,7 +182,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
 
               <Page
                 className={cn(isLoading ? 'hidden' : '', 'flex shadow-lg justify-center items-center')}
-                width={width ? width - 64 : undefined}
+                width={width ? width - 50: undefined}
                 height={undefined}
                 pageNumber={currPage}
                 scale={scale}

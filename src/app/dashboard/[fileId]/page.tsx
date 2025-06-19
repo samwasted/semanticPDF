@@ -32,7 +32,7 @@ const Page = async function ({ params }: PageProps) {
 
     return (
         <div className="flex-1 justify-between flex flex-col h-[calc(100vh-4.5rem)]">
-            <div className="mx-auto w-full max-w-6xl  grow lg:flex xl:px-2">
+            <div className="mx-auto w-full max-w-6xl grow lg:flex xl:px-2">
                 {/* Left side - PDF viewer */}
                 <div className="flex-1 xl:flex">
                     <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6 flex flex-col">

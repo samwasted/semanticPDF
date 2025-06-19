@@ -1,67 +1,84 @@
-'use client';
-import Link from "next/link";
-import MaxWidthWrapper from "../MaxWidthWrapper";
-import { buttonVariants } from "./button";
-import {RegisterLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
-import { ArrowRight } from "lucide-react";
-const Navbar = () => {
+import Link from 'next/link'
+import MaxWidthWrapper from '../MaxWidthWrapper'
+import { buttonVariants } from './button'
+import {
+  LoginLink,
+  RegisterLink,
+  getKindeServerSession,
+} from '@kinde-oss/kinde-auth-nextjs/server'
+import { ArrowRight } from 'lucide-react'
+import UserAccountNav from './UserAccountNav'
+import MobileNav from './MobileNav'
+
+const Navbar = async () => {
+  const { getUser } = getKindeServerSession()
+  const user = await getUser()
+
   return (
-    <nav className="sticky top-0 inset-x-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg">
-      <MaxWidthWrapper className="flex items-center justify-between h-14">
-        {/* Logo */}
-        <Link href="/" className="flex items-center font-semibold text-xl">
-          <span>semanticPDF.</span>
-        </Link>
-
-        {/* Navigation Links */}
-        <div className="hidden sm:flex items-center space-x-4">
+    <nav className='sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all'>
+      <MaxWidthWrapper>
+        <div className='flex h-14 items-center justify-between border-b border-zinc-200'>
           <Link
-            href="/pricing"
-            className={buttonVariants({ variant: "ghost", size: "sm" })}
-          >
-            Pricing
+            href='/'
+            className='flex z-40 font-semibold'>
+            <span>semanticPDF</span>
           </Link>
-          <LoginLink
-            className={buttonVariants({
-                variant: 'ghost',
-                size: 'sm'
-            })}
-          >Sign in</LoginLink>
-          <RegisterLink
-            className={buttonVariants({
-                size: 'sm'
-            })}
-          >
-            Get Started <ArrowRight className="ml-1.5 h-5 w-5" />
-          </RegisterLink>
-        </div>
 
-        {/* Mobile Menu Button */}
-        <div className="sm:hidden">
-          <button
-            aria-label="Open menu"
-            className="p-2 rounded-md hover:bg-gray-100 transition"
-          >
-            {/* Simple hamburger icon */}
-            <svg
-              className="h-6 w-6 text-gray-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
+          <MobileNav isAuth={!!user} />
+
+          <div className='hidden items-center space-x-4 sm:flex'>
+            {!user ? (
+              <>
+                <Link
+                  href='/pricing'
+                  className={buttonVariants({
+                    variant: 'ghost',
+                    size: 'sm',
+                  })}>
+                  Pricing
+                </Link>
+                <LoginLink
+                  className={buttonVariants({
+                    variant: 'ghost',
+                    size: 'sm',
+                  })}>
+                  Sign in
+                </LoginLink>
+                <RegisterLink
+                  className={buttonVariants({
+                    size: 'sm',
+                  })}>
+                  Get started{' '}
+                  <ArrowRight className='ml-1.5 h-5 w-5' />
+                </RegisterLink>
+              </>
+            ) : (
+              <>
+                <Link
+                  href='/dashboard'
+                  className={buttonVariants({
+                    variant: 'ghost',
+                    size: 'sm',
+                  })}>
+                  Dashboard
+                </Link>
+
+                <UserAccountNav
+                  name={
+                    !user.given_name || !user.family_name
+                      ? 'Your Account'
+                      : `${user.given_name} ${user.family_name}`
+                  }
+                  email={user.email ?? ''}
+                  imageUrl={user.picture ?? ''}
+                />
+              </>
+            )}
+          </div>
         </div>
       </MaxWidthWrapper>
     </nav>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
