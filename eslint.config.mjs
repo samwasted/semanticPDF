@@ -1,13 +1,20 @@
+import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import nextPlugin from '@next/eslint-plugin-next';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
-import { FlatCompat } from '@eslint/eslintrc';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const compat = new FlatCompat();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended
+});
 
 export default [
-  js.configs.recommended,
   ...compat.extends('next/core-web-vitals'),
   {
     files: ['**/*.ts', '**/*.tsx'],
@@ -19,16 +26,13 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tsPlugin,
-      '@next/next': nextPlugin,
+      '@next/next': nextPlugin
     },
     rules: {
-      // Resolve unused expression errors
       '@typescript-eslint/no-unused-expressions': [
-        'error',
+        'error', 
         { allowShortCircuit: true, allowTernary: true }
       ],
-      
-      // Resolve unused variable errors
       '@typescript-eslint/no-unused-vars': [
         'error',
         { 
@@ -36,11 +40,7 @@ export default [
           varsIgnorePattern: '^_',
           caughtErrorsIgnorePattern: '^_'
         }
-      ],
-      
-      // Next.js specific rules
-      '@next/next/no-html-link-for-pages': 'error',
-      '@next/next/no-sync-scripts': 'error'
+      ]
     }
   }
 ];
