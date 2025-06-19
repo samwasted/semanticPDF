@@ -6,9 +6,9 @@ import { notFound, redirect } from "next/navigation"
 
 
 
-const Page = async function ({ params }: { params: { fileId: string } }) {
+const Page = async function (props: { params: Promise<{ fileId: string }> }) {
     // Retrieve the file Id
-    const { fileId } = params
+    const { fileId } = await props.params;
     
     // Get user
     const { getUser } = getKindeServerSession()
