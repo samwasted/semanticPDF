@@ -7,12 +7,13 @@ import React, { PropsWithChildren, useState } from "react";
 import { trpc } from "../_trpc/client";
 
 export default function Provider({ children }: PropsWithChildren) {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
     const [queryClient] = useState(() => new QueryClient());
     const [trpcClient] = useState(() =>
         trpc.createClient({
             links: [
                 httpBatchLink({
-                    url: "http://localhost:3000/api/trpc"
+                    url: `${baseUrl}.app/api/trpc`
                 })
             ]
         })
