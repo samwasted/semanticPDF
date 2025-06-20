@@ -41,7 +41,7 @@ export default function SubscriptionButton() {
             }
           } catch (err: any) {
             console.error(err);
-            alert("❌ Payment verification failed.");                  
+            alert("Payment verification failed.");                  
           }
         },
         // Optional: handle checkout dismiss or failure
