@@ -46,6 +46,7 @@
     "openai": "^5.5.1",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "3.11.174",
+    "razorpay": "^2.9.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.8",

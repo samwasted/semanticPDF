@@ -1,0 +1,75 @@
+'use client'
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import Script from "next/script";
+
+export default function SubscriptionButton() {
+  const subscribe = async () => {
+    try {
+      // 1. Create subscription
+      const res = await fetch("/api/createSubscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!res.ok) throw new Error("Failed to create subscription");  
+      const { subscription_id } = await res.json();          
+
+      // 2. Open Razorpay Checkout for subscription authorization
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,          
+        subscription_id,                                        
+        name: "semanticPDF",                                    
+        description: "Monthly Subscription",                    
+        handler: async (response: any) => {
+          // 3. Verify subscription payment
+          try {
+            const verifyRes = await fetch("/api/verifySubscription", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                subscriptionId: response.razorpay_subscription_id,
+                paymentId: response.razorpay_payment_id,
+                signature: response.razorpay_signature
+              })
+            });
+            if (!verifyRes.ok) throw new Error("Verification API error");  
+            const result = await verifyRes.json();                      
+            if (result.success) {
+              alert("Subscription successful!");                    
+            } else {
+              alert("Subscription failed. Please try again.");     
+            }
+          } catch (err: any) {
+            console.error(err);
+            alert("❌ Payment verification failed.");                  
+          }
+        },
+        // Optional: handle checkout dismiss or failure
+        modal: {
+          ondismiss: () => alert("Subscription popup closed.")      
+        },
+        // prefill: {
+          // Uncomment and populate if you have user data
+          // name: "Customer Name",
+          // email: "customer@example.com",
+          // contact: "+919876543210"
+        // }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } catch (err: any) {
+      console.error(err);
+      alert("Could not initiate subscription. Please try later."); 
+    }
+  };
+
+  return (
+    <>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      <Button onClick={subscribe} className="w-full cursor-pointer">
+        Upgrade now <ArrowRight className="h-5 w-5 ml-1.5" />
+      </Button>
+    </>
+  );
+}

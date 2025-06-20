@@ -34,7 +34,7 @@ export const ourFileRouter = {
             key: file.key,
             name: file.name,
             userId: metadata.userId,
-            url: file.url, // Changed from file.ufsUrl to file.url
+            url: file.ufsUrl, 
             uploadStatus: 'PROCESSING'
           }
         });
@@ -78,8 +78,8 @@ export const ourFileRouter = {
 
         // Initialize OpenAI embeddings
         const embeddings = new OpenAIEmbeddings({
-          openAIApiKey: process.env.OPENAI_API_KEY, // Fixed: use openAIApiKey instead of apiKey
-          modelName: "text-embedding-3-small", // Specify model explicitly
+          openAIApiKey: process.env.OPENAI_API_KEY,
+          modelName: "text-embedding-3-small", 
         });
 
         console.log('Creating embeddings and storing in Pinecone...');
