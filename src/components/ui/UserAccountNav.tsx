@@ -93,8 +93,8 @@ const UserAccountNav = async ({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className='cursor-pointer'>
-            <LogoutLink>Log out</LogoutLink>
+        <DropdownMenuItem className='cursor-pointer' asChild>
+          <Link href='/api/auth/logout'>Logout</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
