@@ -7,13 +7,9 @@ import {
   getKindeServerSession,
 } from '@kinde-oss/kinde-auth-nextjs/server'
 import { ArrowRight } from 'lucide-react'
+import UserAccountNav from './UserAccountClient'
 import MobileNav from './MobileNav'
 
-import dynamic from 'next/dynamic'
-const UserAccountNav = dynamic(
-  () => import('@/components/ui/UserAccountNav'),
-  { ssr: false }
-)
 const Navbar = async () => {
   const { getUser } = getKindeServerSession()
   const user = await getUser()
