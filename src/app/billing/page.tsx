@@ -60,8 +60,15 @@ export default function BillingStatusPage() {
   }, []);
 
   useEffect(() => {
-    if (!loading && (!plan || !plan.razorpaySubscriptionId)) {
-      router.replace('/pricing?origin=billing');
+     if (!loading) {
+      const timer = setTimeout(() => {
+        if (!plan || !plan.razorpaySubscriptionId) {
+          router.replace('/pricing?origin=billing');
+        }
+      }, 5000);
+
+      // Clean up the timer if component unmounts or dependencies change
+      return () => clearTimeout(timer);
     }
   }, [loading, plan, router]);
 
