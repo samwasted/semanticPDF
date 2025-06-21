@@ -7,7 +7,7 @@ import Skeleton from "react-loading-skeleton";
 import Link from "next/link";
 import dayjs from "dayjs";
 import { Button } from "./button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
 
@@ -15,6 +15,10 @@ const Dashboard = () => {
     null
   )
 
+  const { data: subscriptionData } = trpc.checkSubscription.useQuery()
+  const isSubscribed = subscriptionData?.isSubscribed ?? false
+
+  console.log("is subscribed ",isSubscribed)
   const utils = trpc.useUtils()
 
   const { data: files, isLoading } = trpc.getUserFiles.useQuery()
@@ -36,7 +40,7 @@ const Dashboard = () => {
       <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:gap-0">
         <h1 className="mb-3 font-bold text-5xl text-gray-900">My files</h1>
 
-        <UploadButton />
+        <UploadButton isSubscribed={isSubscribed}/>
       </div>
       {/* display all user files */}
       {files && files?.length !== 0 ? (
@@ -69,7 +73,7 @@ const Dashboard = () => {
                     {dayjs(file.createdAt).format('MMMM D')}
                   </div>
                   <div className="flex items-center gap-2"><MessageSquare className="h-4 w-4" />
-                    mocked</div>
+                    message</div>
                   <Button size="sm" className="w-full 
                   bg-red-700/50 hover:bg-red-700/60"
                   variant='destructive'

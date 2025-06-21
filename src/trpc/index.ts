@@ -27,6 +27,25 @@ export const appRouter = router({
         }
         return { success: true }
     }),
+    checkSubscription: privateProcedure.query(async ({ ctx }) => {
+        const { userId } = ctx
+        const dbUser = await db.user.findFirst({
+            where: {
+                id: userId
+            }
+        })
+
+        if (!dbUser) throw new TRPCError({ code: 'NOT_FOUND' })
+
+        const status = dbUser.status
+        let isSubscribed = false
+
+        if (String(status) === 'ACTIVE' || String(status) === 'UNVERIFIED' || String(status) === 'CANCELLED') {
+            isSubscribed = true
+        }
+
+        return { isSubscribed}
+    }),
     getUserFiles: privateProcedure.query(async ({ ctx }) => {
         const { userId } = ctx
         return await db.file.findMany({
@@ -48,6 +67,8 @@ export const appRouter = router({
         })
 
         if (!file) throw new TRPCError({ code: 'NOT_FOUND' })
+        
+        return { id: file.id };
     }),
 
     getFileUploadStatus: privateProcedure

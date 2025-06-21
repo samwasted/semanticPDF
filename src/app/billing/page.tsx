@@ -87,7 +87,7 @@ export default function BillingStatusPage() {
   if (error) return <div className="text-red-500">{error}</div>;
   if (!plan) return null;
 
-  const { name, isSubscribed, currentPeriodEnd, endingAt, status } = plan;
+  const { currentPeriodEnd, endingAt, status } = plan;
   const renewDate = dayjs(currentPeriodEnd).format('MMM D, YYYY');
   const endDate  = dayjs(endingAt).format('MMM D, YYYY');
 
@@ -127,7 +127,7 @@ export default function BillingStatusPage() {
               </Link>{' '}
               to get verified <span className='text-zinc-600'>(one time only)</span>
             </li>
-          ) : null}
+          ) : String(status) === 'CANCELLED'? <ul className='text-zinc-600 text-sm mt-6 '>*Your plan will get cancelled after the current ending date</ul> : null}
           {String(status) === 'ACTIVE' ? (
             <Button
               onClick={() =>{
