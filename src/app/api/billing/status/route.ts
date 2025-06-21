@@ -5,7 +5,7 @@ import Razorpay from "razorpay";
 import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export enum UserStatus {
+enum UserStatus {
   ACTIVE = "ACTIVE",
   UNVERIFIED = "UNVERIFIED",
   INACTIVE = "INACTIVE",
