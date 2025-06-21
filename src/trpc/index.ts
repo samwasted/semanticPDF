@@ -36,15 +36,24 @@ export const appRouter = router({
         })
 
         if (!dbUser) throw new TRPCError({ code: 'NOT_FOUND' })
-
+        const subscriptionId = dbUser.SubscriptionId
         const status = dbUser.status
         let isSubscribed = false
 
         if (String(status) === 'ACTIVE' || String(status) === 'UNVERIFIED' || String(status) === 'CANCELLED') {
             isSubscribed = true
         }
+        const currentPeriodEnd = dbUser.CurrentPeriodEnd ? new Date(dbUser.CurrentPeriodEnd) : null; // Date object
+        const remainingCount = dbUser.remainingCount ?? 0;          // Number of months, default to 0 if null
 
-        return { isSubscribed}
+        const totalDays = 30 * remainingCount;
+        const newPeriodEnd = currentPeriodEnd
+            ? new Date(currentPeriodEnd.getTime() + totalDays * 24 * 60 * 60 * 1000)
+            : null;
+        
+        const short_url = dbUser.short_url || null;
+
+        return { isSubscribed, subscriptionId, status, newPeriodEnd, currentPeriodEnd, short_url }
     }),
     getUserFiles: privateProcedure.query(async ({ ctx }) => {
         const { userId } = ctx
@@ -67,7 +76,7 @@ export const appRouter = router({
         })
 
         if (!file) throw new TRPCError({ code: 'NOT_FOUND' })
-        
+
         return { id: file.id };
     }),
 
@@ -107,54 +116,54 @@ export const appRouter = router({
         return file
     }),
     getFileMessages: privateProcedure
-    .input(
-      z.object({
-        limit: z.number().min(1).max(100).nullish(),
-        cursor: z.string().nullish(),
-        fileId: z.string(),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const { userId } = ctx
-      const { fileId, cursor } = input
-      const limit = input.limit ?? INFINITE_QUERY_LIMIT
+        .input(
+            z.object({
+                limit: z.number().min(1).max(100).nullish(),
+                cursor: z.string().nullish(),
+                fileId: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const { userId } = ctx
+            const { fileId, cursor } = input
+            const limit = input.limit ?? INFINITE_QUERY_LIMIT
 
-      const file = await db.file.findFirst({
-        where: {
-          id: fileId,
-          userId,
-        },
-      })
+            const file = await db.file.findFirst({
+                where: {
+                    id: fileId,
+                    userId,
+                },
+            })
 
-      if (!file) throw new TRPCError({ code: 'NOT_FOUND' })
+            if (!file) throw new TRPCError({ code: 'NOT_FOUND' })
 
-      const messages = await db.message.findMany({
-        take: limit + 1,
-        where: {
-          fileId,
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        cursor: cursor ? { id: cursor } : undefined,
-        select: {
-          id: true,
-          isUserMessage: true,
-          createdAt: true,
-          text: true,
-        },
-      })
+            const messages = await db.message.findMany({
+                take: limit + 1,
+                where: {
+                    fileId,
+                },
+                orderBy: {
+                    createdAt: 'desc',
+                },
+                cursor: cursor ? { id: cursor } : undefined,
+                select: {
+                    id: true,
+                    isUserMessage: true,
+                    createdAt: true,
+                    text: true,
+                },
+            })
 
-      let nextCursor: typeof cursor | undefined = undefined
-      if (messages.length > limit) {
-        const nextItem = messages.pop()
-        nextCursor = nextItem?.id
-      }
+            let nextCursor: typeof cursor | undefined = undefined
+            if (messages.length > limit) {
+                const nextItem = messages.pop()
+                nextCursor = nextItem?.id
+            }
 
-      return {
-        messages,
-        nextCursor,
-      }
-    }),
+            return {
+                messages,
+                nextCursor,
+            }
+        }),
 })
 export type AppRouter = typeof appRouter
