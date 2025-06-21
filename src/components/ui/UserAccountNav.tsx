@@ -26,7 +26,7 @@ const UserAccountNav = async ({
   name,
 }: UserAccountNavProps) => {
   // const subscriptionPlan = await getUserSubscriptionPlan()
-    const subscriptionPlan = await getUserSubscriptionPlanRazorpay()
+  const subscriptionPlan = await getUserSubscriptionPlanRazorpay()
   imageUrl = null
   return (
     <DropdownMenu>
@@ -78,14 +78,24 @@ const UserAccountNav = async ({
 
         <DropdownMenuItem className='cursor-pointer' asChild>
           {subscriptionPlan?.isSubscribed ? (
-            <Link href='/billing'>
+            <button
+              onClick={() => {
+                window.location.href = "/billing";
+              }}
+              className="text-blue-600 hover:underline"
+            >
               Manage Subscription
-            </Link>
+            </button>
           ) : (
-            <Link href='/pricing'>
-              Upgrade{' '}
-              <Gem className='text-blue-600 h-4 w-4 ml-1.5' />
-            </Link>
+            <button
+              onClick={() => {
+                window.location.href = "/pricing";
+              }}
+              className="flex items-center text-blue-600 hover:underline"
+            >
+              <span>Upgrade</span>
+              <Gem className="ml-1.5 h-4 w-4" />
+            </button>
           )}
         </DropdownMenuItem>
 
