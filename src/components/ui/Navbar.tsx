@@ -10,6 +10,7 @@ import { ArrowRight } from 'lucide-react'
 import UserAccountNav from './UserAccountNav'
 import MobileNav from './MobileNav'
 
+
 const Navbar = async () => {
   const { getUser } = getKindeServerSession()
   const user = await getUser()

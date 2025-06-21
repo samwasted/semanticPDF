@@ -13,6 +13,7 @@ import { Icons } from './Icons'
 import Link from 'next/link'
 import { Gem } from 'lucide-react'
 import { getUserSubscriptionPlanRazorpay } from '@/lib/razorpay'
+import { trpc } from '@/_trpc/client'
 
 interface UserAccountNavProps {
   email: string | undefined
@@ -26,7 +27,8 @@ const UserAccountNav = async ({
   name,
 }: UserAccountNavProps) => {
   // const subscriptionPlan = await getUserSubscriptionPlan()
-    const subscriptionPlan = await getUserSubscriptionPlanRazorpay()
+      const { data: subscriptionData } = trpc.checkSubscription.useQuery()
+      const isSubscribed = subscriptionData?.isSubscribed ?? false
   imageUrl = null
   return (
     <DropdownMenu>
@@ -77,7 +79,7 @@ const UserAccountNav = async ({
         </DropdownMenuItem>
 
         <DropdownMenuItem className='cursor-pointer' asChild>
-          {subscriptionPlan?.isSubscribed ? (
+          {isSubscribed ? (
             <Link href='/billing'>
               Manage Subscription
             </Link>
