@@ -45,7 +45,7 @@ const UserAccountNav = async ({
                 />
               </div>
             ) : (
-              <AvatarFallback>
+              <AvatarFallback className='cursor-pointer'>
                 <span className='sr-only'>{name}</span>
                 <Icons.user className='h-4 w-4 text-zinc-900' />
               </AvatarFallback>
@@ -72,11 +72,11 @@ const UserAccountNav = async ({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem className='cursor-pointer' asChild>
           <Link href='/dashboard'>Dashboard</Link>
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem className='cursor-pointer' asChild>
           {subscriptionPlan?.isSubscribed ? (
             <Link href='/billing'>
               Manage Subscription

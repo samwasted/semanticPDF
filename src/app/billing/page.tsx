@@ -3,10 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
-import { stat } from 'fs';
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
-import { Divide, Loader2, User } from 'lucide-react';
-import { DialogOverlayProps } from '@radix-ui/react-dialog';
+import { Divide, Gem, Loader2, User } from 'lucide-react';
 import Link from  'next/link';
 
 type BillingStatus = {
@@ -99,8 +97,8 @@ export default function BillingStatusPage() {
       <MaxWidthWrapper className='pt-10 divide-x-2 flex flex-col md:flex-row mt-6'>
         <div className='divide-y-2 md:w-full'>
           <h1 className='text-3xl font-semibold text-zinc-800'>Billing status</h1>
-          <p className='font-semibold text-xl mt-10'>
-            You are on the <span className='text-blue-600'>Pro</span>{' '}plan
+          <p className='font-semibold text-xl mt-10 flex flex-row'>
+            You are on the <span className='text-blue-600'>&nbsp;Pro&nbsp;</span>{' '}plan&nbsp;<span ><Gem className='text-blue-600'/></span>
           </p>
         </div>
         <div className='divide-y-2 pt-20 md:pt-0 md:w-200 flex-col flex p-6'>
@@ -114,7 +112,7 @@ export default function BillingStatusPage() {
           </li>
           <li className='mt-6'>
             {String(status) === 'ACTIVE' ? (
-              <span>Auto renews on: {renewDate}</span>
+              <span>Auto renewal on: {renewDate}</span>
             ) : (
               <span>Ends at: {renewDate}</span>
             )}
@@ -132,7 +130,10 @@ export default function BillingStatusPage() {
           ) : null}
           {String(status) === 'ACTIVE' ? (
             <Button
-              onClick={handleCancel}
+              onClick={() =>{
+                handleCancel()
+                window.location.reload()
+              }}
               disabled={cancelLoading}
               className="bg-red-400 hover:bg-red-500 transition-colors cursor-pointer mt-6"
             >
