@@ -45,17 +45,28 @@ export default function BillingStatusPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
+    let attempts = 0;
+    const maxAttempts = 3;
+    const delay = 2000; // 2 seconds
+
     const loadStatus = async () => {
+      attempts += 1;
       try {
         const res = await fetch('/api/billing/status');
         if (!res.ok) throw new Error('Failed to load');
         setPlan(await res.json());
-      } catch {
-        setError('Could not load billing info');
+        setError(null);
+      } catch (err) {
+        if (attempts < maxAttempts) {
+          setTimeout(loadStatus, delay);
+        } else {
+          setError('Could not load billing info after retries');
+        }
       } finally {
-        setLoading(false);
+        if (attempts >= maxAttempts) setLoading(false);
       }
     };
+
     loadStatus();
   }, []);
 
