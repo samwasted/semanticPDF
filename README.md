@@ -12,7 +12,9 @@
 
 A modern web application that enables semantic querying of PDF documents through natural language conversations. Built with RAG (Retrieval-Augmented Generation) architecture for contextually accurate responses.
 
-![SemanticPDF Interface](https://via.placeholder.com/800x450/1a1a1a/ffffff?text=SemanticPDF+Interface)
+
+
+![Screenshot 2025-06-22 011527](https://github.com/user-attachments/assets/403ff5ea-f846-4de2-8bd3-4a8b7bd3e50f)
 
 ## 🔧 Core Features
 
@@ -56,6 +58,9 @@ A modern web application that enables semantic querying of PDF documents through
 
 Users upload PDFs through the dashboard interface. Documents are processed, chunked, and embedded using OpenAI's text-embedding model, then stored in Pinecone for semantic retrieval.
 
+![Screenshot 2025-06-22 011527](https://github.com/user-attachments/assets/af5483c6-2505-41d6-80a9-971ce7d8d7f9)
+
+
 ### 2. 🔍 Semantic Query Processing
 
 ```typescript
@@ -74,12 +79,16 @@ Users can now interact with their uploaded documents through natural language qu
 ## 💰 Subscription Architecture
 
 ### 💎 Pricing Tiers
-![Pricing Structure](https://via.placeholder.com/600x200/059669/ffffff?text=Free+vs+Pro+Comparison)
+
+![Screenshot 2025-06-22 011326](https://github.com/user-attachments/assets/13af49dc-465a-4277-b37a-f3b1f3206779)
+
 
 Two-tier subscription model with flexible limits and self-managed billing through the dashboard interface.
 
 ### 🧾 Billing Management
-![Billing Dashboard](https://via.placeholder.com/600x200/7c3aed/ffffff?text=Subscription+Management+Panel)
+
+![Screenshot 2025-06-21 235313](https://github.com/user-attachments/assets/58cbef21-3e0b-4b3a-b668-7ad4ad980375)
+
 
 - Razorpay integration (test mode)
 - Subscription lifecycle management
@@ -142,10 +151,9 @@ public/                    # Static assets
 
 <div align="center">
 
-### 🌟 SemanticPDF in Action
-
 **Made by samwasted for CSOC 25**
 
-![SemanticPDF Demo](https://via.placeholder.com/800x400/gradient?text=Interactive+Demo+Showcase)
+![hohfGGW](https://github.com/user-attachments/assets/70e48699-8f74-4234-a3ed-d8d712e68660)
+
 
 </div>
