@@ -12,7 +12,7 @@ export default function SubscriptionButton() {
         headers: { "Content-Type": "application/json" }
       });
       if (!res.ok) throw new Error("Failed to create subscription");  
-      const { subscription_id, short_url } = await res.json(); 
+      const { subscription_id } = await res.json(); 
       
       // 2. Open Razorpay Checkout for subscription authorization
       const options = {
@@ -30,7 +30,8 @@ export default function SubscriptionButton() {
               body: JSON.stringify({
                 subscriptionId: response.razorpay_subscription_id,
                 paymentId: response.razorpay_payment_id,
-                signature: response.razorpay_signature
+                signature: response.razorpay_signature,
+                short_url: response.short_url
               })
             });
             if (!verifyRes.ok) throw new Error("Verification API error");  

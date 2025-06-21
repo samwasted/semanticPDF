@@ -63,9 +63,9 @@ const newPeriodEnd = currentPeriodEnd
     ...plan,
     razorpaySubscriptionId: dbUser.SubscriptionId,
     currentPeriodEnd: dbUser.CurrentPeriodEnd,
-    razorpayCustomerId: dbUser.CustomerId,
     isSubscribed,
     endingAt: newPeriodEnd || null,
     status: status,
+    short_url: dbUser.short_url || null,
   };
 }

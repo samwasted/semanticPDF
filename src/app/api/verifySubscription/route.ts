@@ -3,7 +3,6 @@ import crypto from "crypto";
 import Razorpay from "razorpay";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { db } from "@/db";
-import { User } from "lucide-react";
 
 enum UserStatus {
   ACTIVE = "ACTIVE",
@@ -50,7 +49,6 @@ console.log('Subscription object:', subscription);
   const currentEndDate = subscription.current_end
     ? new Date(subscription.current_end * 1000)
     : null;
-  const customerId = subscription.customer_id ?? null;
 
 
   let status = UserStatus.INACTIVE;
@@ -61,11 +59,11 @@ console.log('Subscription object:', subscription);
     where: { id: user.id },
     data: {
       SubscriptionId: subscriptionId,
-      CustomerId: customerId,
       PriceId: subscription.plan_id,
       CurrentPeriodEnd: currentEndDate,
       status: status,
-      remainingCount: Number(subscription.remaining_count) || 0
+      remainingCount: Number(subscription.remaining_count) || 0,
+      short_url: subscription.short_url, // Store short URL if provided
     },
   });
 
@@ -73,7 +71,6 @@ console.log('Subscription object:', subscription);
     message: "Subscription updated",
     success: true,
     currentPeriodEnd: currentEndDate,
-    customerId,
     status
   });
 }

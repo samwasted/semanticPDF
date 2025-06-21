@@ -18,6 +18,5 @@ export async function POST() {
   // Return subscription_id for checkout
   return NextResponse.json({ 
     subscription_id: subscription.id,
-    short_url: subscription.short_url,
   });
 }

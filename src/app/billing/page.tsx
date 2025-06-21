@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { stat } from 'fs';
+import MaxWidthWrapper from '@/components/MaxWidthWrapper';
+import { Divide, Loader2, User } from 'lucide-react';
+import { DialogOverlayProps } from '@radix-ui/react-dialog';
+import Link from  'next/link';
 
 type BillingStatus = {
   name: string;
@@ -13,6 +17,7 @@ type BillingStatus = {
   currentPeriodEnd?: string | null;
   endingAt?: string | null;
   status: UserStatus;
+  short_url: string
 };
 enum UserStatus {
   ACTIVE,
@@ -41,7 +46,6 @@ export default function BillingStatusPage() {
     };
     loadStatus();
   }, []);
-
   useEffect(() => {
     if (!loading && (!plan || !plan.razorpaySubscriptionId)) {
       router.replace('/pricing?origin=billing');
@@ -70,7 +74,18 @@ export default function BillingStatusPage() {
     }
   };
 
-  if (loading) return <div>Loading billing status...</div>; //IMPROVE THIS
+  if (loading){
+    return (
+      <>
+      <div className='flex justify-center items-center h-[calc(100vh-70px)]'>
+      <MaxWidthWrapper className='flex justify-center items-center flex-col'>
+        <Loader2 className='w-5 h-5 animate-spin mb-6'/>
+        <p className='text-zinc-600'>Fetching payment details...</p>
+      </MaxWidthWrapper>
+      </div>
+      </>
+    )
+  } 
   if (error) return <div className="text-red-500">{error}</div>;
   if (!plan) return null;
 
@@ -78,24 +93,55 @@ export default function BillingStatusPage() {
   const renewDate = dayjs(currentPeriodEnd).format('MMM D, YYYY');
   const endDate  = dayjs(endingAt).format('MMM D, YYYY');
 
+
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 border rounded-lg shadow bg-white">
-      <h2 className="text-2xl font-bold mb-4">Billing Status</h2>
-      <div className="space-y-2 mb-6">
-        <div><strong>Plan:</strong> {name}</div>
-        <div>
-          <strong>Status:</strong>{' '}
-          {status}
+    <div className='flex justify-center items-center h-[calc(80vh-100px)]'>
+      <MaxWidthWrapper className='pt-10 divide-x-2 flex flex-col md:flex-row mt-6'>
+        <div className='divide-y-2 md:w-full'>
+          <h1 className='text-3xl font-semibold text-zinc-800'>Billing status</h1>
+          <p className='font-semibold text-xl mt-10'>
+            You are on the <span className='text-blue-600'>Pro</span>{' '}plan
+          </p>
         </div>
-        {renewDate && <div><strong>'Renews on':</strong> {renewDate}</div>}
-        {endDate && <div><strong>Ending at:</strong> {endDate}</div>}
-      </div>
-      {isSubscribed && (
-        <Button onClick={handleCancel} disabled={cancelLoading} className="bg-red-600 hover:bg-red-700">
-          {cancelLoading ? 'Cancelling...' : 'Cancel Subscription'}
-        </Button>
-      )}
-      {1 && <div className="mt-4 text-orange-600">Your subscription will end at the end of the current billing period.</div>}
+        <div className='divide-y-2 pt-20 md:pt-0 md:w-200 flex-col flex p-6'>
+          <li className='mt-6'>
+            Status:{' '}
+            {String(status) === 'ACTIVE' ? (
+              <span className='text-blue-600'>{status}</span>
+            ) : (
+              <span className='text-red-400'>{status}</span>
+            )}
+          </li>
+          <li className='mt-6'>
+            {String(status) === 'ACTIVE' ? (
+              <span>Auto renews on: {renewDate}</span>
+            ) : (
+              <span>Ends at: {renewDate}</span>
+            )}
+          </li>
+          {String(status) === 'ACTIVE' ? (
+            <li className='mt-6'>Ends at: {endDate}</li>
+          ) : String(status) === 'UNVERIFIED' ? (
+            <li className='mt-6'>
+              Click{' '}
+              <Link href={plan.short_url} className='text-blue-600 cursor-pointer'>
+                here
+              </Link>{' '}
+              to get verified <span className='text-zinc-600'>(one time only)</span>
+            </li>
+          ) : null}
+          {String(status) === 'ACTIVE' ? (
+            <Button
+              onClick={handleCancel}
+              disabled={cancelLoading}
+              className="bg-red-400 hover:bg-red-500 transition-colors cursor-pointer mt-6"
+            >
+              {cancelLoading ? 'Cancelling...' : 'Cancel Subscription'}
+            </Button>
+          ) : null}
+        </div>
+        <div className='flex justify-center items-center'></div>
+      </MaxWidthWrapper>
     </div>
   );
 }

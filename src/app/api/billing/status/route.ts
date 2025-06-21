@@ -5,7 +5,7 @@ import Razorpay from "razorpay";
 import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-enum UserStatus {
+export enum UserStatus {
   ACTIVE = "ACTIVE",
   UNVERIFIED = "UNVERIFIED",
   INACTIVE = "INACTIVE",
@@ -14,16 +14,27 @@ enum UserStatus {
 }
 
 export async function GET() {
-  const subscriptionId = 'sub_QjVAwrnCDkxN6g'
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  const dbUser = await db.user.findFirst({
+    where: { id: user?.id },
+  });
   const razorpayInstance = new Razorpay({
     key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string,
     key_secret: process.env.RAZORPAY_SECRET_ID as string,
   });
+  const subscriptionId = dbUser?.SubscriptionId as string;
   const subscription = await razorpayInstance.subscriptions.fetch(subscriptionId);
-  const dbUser = await db.user.findFirst({
-    where: { SubscriptionId: subscriptionId },
-  });
+
   console.log(subscription)
+  if(subscription.short_url != dbUser?.short_url) {
+    await db.user.update({
+      where: { id: dbUser?.id },
+      data: {
+        short_url: subscription.short_url,
+      },
+    });
+  }
   if (subscription.current_end != null) {
 
     if (subscription.current_end < Math.floor(Date.now() / 1000)) {
@@ -44,8 +55,6 @@ export async function GET() {
       const currentEndDate = new Date(subscription.current_end * 1000);
       let status = UserStatus.UNVERIFIED;
       if (currentEndDate !== null && subscriptionId !== null) status = UserStatus.ACTIVE;
-      const { getUser } = getKindeServerSession();
-      const user = await getUser();
       if (!user || !user.id) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
       }
