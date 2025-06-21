@@ -13,8 +13,8 @@
 A modern web application that enables semantic querying of PDF documents through natural language conversations. Built with RAG (Retrieval-Augmented Generation) architecture for contextually accurate responses.
 
 
+![Uploading Screenshot 2025-06-22 011551.png…]()
 
-![Screenshot 2025-06-22 011527](https://github.com/user-attachments/assets/403ff5ea-f846-4de2-8bd3-4a8b7bd3e50f)
 
 ## 🔧 Core Features
 
