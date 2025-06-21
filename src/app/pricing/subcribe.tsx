@@ -5,6 +5,7 @@ import Script from "next/script";
 import { toast } from "sonner";
 
 export default function SubscriptionButton() {
+
   const subscribe = async () => {
     try {
       // 1. Create subscription

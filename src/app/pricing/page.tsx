@@ -8,12 +8,12 @@ import SubscriptionButton from "./subcribe"
 import { redirect } from "next/navigation"
 import { getUserSubscriptionPlanRazorpay } from "@/lib/razorpay"
 const Page = async () => {
-    // const { getUser } = getKindeServerSession()
-    // const user = await getUser()
+    const { getUser } = getKindeServerSession()
+    const user = await getUser()
 
-    // if( !user ||!user.id ){
-    //     redirect(`/auth-callback?origin=pricing`)
-    // }
+    if( !user ||!user.id ){
+        redirect(`/auth-callback?origin=pricing`)
+    }
     const sub = await getUserSubscriptionPlanRazorpay()
     if(sub.isSubscribed){
         redirect('/billing?origin=pricing')
