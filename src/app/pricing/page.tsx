@@ -6,10 +6,20 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server"
 import { ArrowRight, Check, HelpCircle, Link, Minus } from "lucide-react"
 import SubscriptionButton from "./subcribe"
 import { Button } from "@/components/ui/button"
+import { redirect } from "next/navigation"
+import { getUserSubscriptionPlanRazorpay } from "@/lib/razorpay"
 const Page = async () => {
     const { getUser } = getKindeServerSession()
     const user = await getUser()
 
+    if( !user ||!user.id ){
+        redirect(`/auth-callback?origin=pricing`)
+    }
+    const sub = await getUserSubscriptionPlanRazorpay()
+    console.log(sub)
+    if(sub.isSubscribed){
+        redirect('/billing?origin=pricing')
+    }
     const pricingItems = [
         {
             plan: 'Free',

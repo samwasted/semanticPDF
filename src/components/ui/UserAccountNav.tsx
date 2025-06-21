@@ -12,7 +12,7 @@ import Image from 'next/image'
 import { Icons } from './Icons'
 import Link from 'next/link'
 import { Gem } from 'lucide-react'
-import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/server'
+import { getUserSubscriptionPlanRazorpay } from '@/lib/razorpay'
 
 interface UserAccountNavProps {
   email: string | undefined
@@ -26,9 +26,7 @@ const UserAccountNav = async ({
   name,
 }: UserAccountNavProps) => {
   // const subscriptionPlan = await getUserSubscriptionPlan()
-  const subscriptionPlan = {
-    isSubscribed: false
-  }
+    const subscriptionPlan = await getUserSubscriptionPlanRazorpay()
   imageUrl = null
   return (
     <DropdownMenu>
@@ -80,7 +78,7 @@ const UserAccountNav = async ({
 
         <DropdownMenuItem asChild>
           {subscriptionPlan?.isSubscribed ? (
-            <Link href='/dashboard/billing'>
+            <Link href='/billing'>
               Manage Subscription
             </Link>
           ) : (

@@ -12,13 +12,14 @@ export default function SubscriptionButton() {
         headers: { "Content-Type": "application/json" }
       });
       if (!res.ok) throw new Error("Failed to create subscription");  
-      const { subscription_id } = await res.json();          
-
+      const { subscription_id, short_url } = await res.json(); 
+      
       // 2. Open Razorpay Checkout for subscription authorization
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,          
         subscription_id,                                        
-        name: "semanticPDF",                                    
+        name: "semanticPDF",
+        currency: "INR",                                    
         description: "Monthly Subscription",                    
         handler: async (response: any) => {
           // 3. Verify subscription payment
@@ -33,9 +34,10 @@ export default function SubscriptionButton() {
               })
             });
             if (!verifyRes.ok) throw new Error("Verification API error");  
-            const result = await verifyRes.json();                      
+            const result = await verifyRes.json();  
+            console.log(result)                    
             if (result.success) {
-              alert("Subscription successful!");                    
+              alert("Subscription successful!");                    //update to use sonner / toast
             } else {
               alert("Subscription failed. Please try again.");     
             }

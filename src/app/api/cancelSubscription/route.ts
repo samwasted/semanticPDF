@@ -3,6 +3,7 @@ import Razorpay from "razorpay";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { db } from "@/db";
 
+// Initialize Razorpay client
 const razorpay = new Razorpay({
   key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
   key_secret: process.env.RAZORPAY_SECRET_ID!,
@@ -10,6 +11,8 @@ const razorpay = new Razorpay({
 
 export async function POST(request: Request) {
   const { subscriptionId, cancelAtCycleEnd } = await request.json();
+
+  // Authenticate user (optional, but recommended)
   const { getUser } = getKindeServerSession();
   const user = await getUser();
   if (!user?.id) {
@@ -17,29 +20,42 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Pass cancelAtCycleEnd as boolean directly
-    const canceledSub = await razorpay.subscriptions.cancel(
+    // Cancel the subscription
+    const cancelled = await razorpay.subscriptions.cancel(
       subscriptionId,
-      cancelAtCycleEnd as boolean
+      cancelAtCycleEnd
     );
-    // Immediate cancellation: clear fields
-    if (cancelAtCycleEnd === false) {
-      await db.user.update({
-        where: { id: user.id },
-        data: {
-          SubscriptionId: null,
-          PriceId: null,
-          CurrentPeriodEnd: null,
-          CustomerId: null,
-        },
+
+    if (!cancelled) {
+      return NextResponse.json(
+        { message: "Cancellation failed" },
+        { status: 400 }
+      );
+    }
+    // Update user record in the database
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        status: "CANCELLED",
+        remainingCount: 0, // Reset remaining count
+      },
+    });
+    // Return success response
+    if (cancelAtCycleEnd) {
+      return NextResponse.json({
+        message: "Subscription will be cancelled at the end of the cycle",
       });
     }
+
     return NextResponse.json({
       message: "Subscription cancelled",
-      status: canceledSub.status,
+      status: cancelled.status,
+      cancelledAt: cancelled.ended_at,
     });
   } catch (error: any) {
-    const msg = error.error?.description || error.message;
-    return NextResponse.json({ message: msg }, { status: 400 });
+    return NextResponse.json(
+      { message: error.message || "Cancellation failed" },
+      { status: 400 }
+    );
   }
 }

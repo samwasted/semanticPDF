@@ -3,6 +3,15 @@ import crypto from "crypto";
 import Razorpay from "razorpay";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { db } from "@/db";
+import { User } from "lucide-react";
+
+enum UserStatus {
+  ACTIVE = "ACTIVE",
+  UNVERIFIED = "UNVERIFIED",
+  INACTIVE = "INACTIVE",
+  CANCELLED = 'CANCELLED',
+  PAST_USER = 'PAST_USER'
+}
 
 export async function POST(request: Request) {
   const { subscriptionId, paymentId, signature } = await request.json();
@@ -33,16 +42,20 @@ export async function POST(request: Request) {
   // 3. Get authenticated user session
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-  if (!user?.id) {
+  if (!user || !user.id) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
+console.log('Subscription object:', subscription);
 
-  // 4. Extract `current_end` and `customer_id`
   const currentEndDate = subscription.current_end
     ? new Date(subscription.current_end * 1000)
     : null;
   const customerId = subscription.customer_id ?? null;
 
+
+  let status = UserStatus.INACTIVE;
+  if(currentEndDate === null && subscriptionId !== null) status = UserStatus.UNVERIFIED
+  console.log("remaining count:", subscription.remaining_count);
   // 5. Update Prisma user record
   await db.user.update({
     where: { id: user.id },
@@ -51,6 +64,8 @@ export async function POST(request: Request) {
       CustomerId: customerId,
       PriceId: subscription.plan_id,
       CurrentPeriodEnd: currentEndDate,
+      status: status,
+      remainingCount: Number(subscription.remaining_count) || 0
     },
   });
 
@@ -59,5 +74,6 @@ export async function POST(request: Request) {
     success: true,
     currentPeriodEnd: currentEndDate,
     customerId,
+    status
   });
 }

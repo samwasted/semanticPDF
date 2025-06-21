@@ -16,5 +16,8 @@ export async function POST() {
     // Optional: trial start, addons, notes, offer_id, etc.
   });
   // Return subscription_id for checkout
-  return NextResponse.json({ subscription_id: subscription.id });
+  return NextResponse.json({ 
+    subscription_id: subscription.id,
+    short_url: subscription.short_url,
+  });
 }
