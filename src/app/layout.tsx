@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
 import Navbar from "@/components/ui/Navbar";
 import Provider from "@/trpc/Providers";
 
+
 import "react-loading-skeleton/dist/skeleton.css"
 import { Toaster } from "@/components/ui/sonner";
 const geistSans = Geist({

@@ -165,14 +165,14 @@ export default function BillingStatusPage() {
                     Are you sure you want to cancel your Pro subscription? This action will:
                     <br />
                     <br />
-                    • Cancel your subscription at the end of the current billing period ({endDate})
+                    • Cancel your subscription at the end of the current billing period ({renewDate})
                     <br />
-                    • Remove access to Pro features after {endDate}
+                    • Remove access to Pro features after {renewDate}
                     <br />
                     • This action cannot be easily undone
                     <br />
                     <br />
-                    You will continue to have access to Pro features until {endDate}.
+                    You will continue to have access to Pro features until {renewDate}.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
