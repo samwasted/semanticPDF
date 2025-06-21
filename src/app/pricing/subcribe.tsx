@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Script from "next/script";
+import { toast } from "sonner";
 
 export default function SubscriptionButton() {
   const subscribe = async () => {
@@ -11,16 +12,16 @@ export default function SubscriptionButton() {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       });
-      if (!res.ok) throw new Error("Failed to create subscription");  
-      const { subscription_id } = await res.json(); 
-      
+      if (!res.ok) throw new Error("Failed to create subscription");
+      const { subscription_id } = await res.json();
+
       // 2. Open Razorpay Checkout for subscription authorization
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,          
-        subscription_id,                                        
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+        subscription_id,
         name: "semanticPDF",
-        currency: "INR",                                    
-        description: "Monthly Subscription",                    
+        currency: "INR",
+        description: "Monthly Subscription",
         handler: async (response: any) => {
           // 3. Verify subscription payment
           try {
@@ -34,28 +35,43 @@ export default function SubscriptionButton() {
                 short_url: response.short_url
               })
             });
-            if (!verifyRes.ok) throw new Error("Verification API error");  
-            const result = await verifyRes.json();  
-            console.log(result)                    
+            if (!verifyRes.ok) throw new Error("Verification API error");
+            const result = await verifyRes.json();
+            console.log(result)
             if (result.success) {
-              alert("Subscription successful!");                    //update to use sonner / toast
+              return toast.success("You have upgraded successfully! reload page to see changes")                  //update to use sonner / toast
             } else {
-              alert("Subscription failed. Please try again.");     
+              return toast.error("Subscription error", {
+              style: {
+                background: '#4832a8',
+                color: 'white',
+              },
+            })
             }
           } catch (err: any) {
             console.error(err);
-            alert("Payment verification failed.");                  
+            return toast.error("Subscrption failed", {
+              style: {
+                background: '#cc7872',
+                color: 'white',
+              },
+            })
           }
         },
         // Optional: handle checkout dismiss or failure
         modal: {
-          ondismiss: () => alert("Subscription popup closed.")      
+          ondismiss: () => toast.error("Subscription popup closed", {
+              style: {
+                background: '#cc7872',
+                color: 'white',
+              },
+            })
         },
         // prefill: {
-          // Uncomment and populate if you have user data
-          // name: "Customer Name",
-          // email: "customer@example.com",
-          // contact: "+919876543210"
+        // Uncomment and populate if you have user data
+        // name: "Customer Name",
+        // email: "customer@example.com",
+        // contact: "+919876543210"
         // }
       };
 
@@ -63,7 +79,7 @@ export default function SubscriptionButton() {
       rzp.open();
     } catch (err: any) {
       console.error(err);
-      alert("Could not initiate subscription. Please try later."); 
+      alert("Could not initiate subscription. Please try later.");
     }
   };
 

@@ -1,11 +1,22 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 import { Divide, Gem, Loader2, User } from 'lucide-react';
-import Link from  'next/link';
+import Link from 'next/link';
 
 type BillingStatus = {
   name: string;
@@ -15,8 +26,9 @@ type BillingStatus = {
   currentPeriodEnd?: string | null;
   endingAt?: string | null;
   status: UserStatus;
-  short_url: string
+  short_url: string;
 };
+
 enum UserStatus {
   ACTIVE,
   INACTIVE,
@@ -30,6 +42,8 @@ export default function BillingStatusPage() {
   const [loading, setLoading] = useState(true);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   useEffect(() => {
     const loadStatus = async () => {
       try {
@@ -44,6 +58,7 @@ export default function BillingStatusPage() {
     };
     loadStatus();
   }, []);
+
   useEffect(() => {
     if (!loading && (!plan || !plan.razorpaySubscriptionId)) {
       router.replace('/pricing?origin=billing');
@@ -65,6 +80,8 @@ export default function BillingStatusPage() {
       });
       if (!res.ok) throw new Error('Cancel failed');
       setPlan(prev => prev && { ...prev, isScheduledToCancel: true });
+      setIsDialogOpen(false); // Close dialog after successful cancellation
+      window.location.reload();
     } catch {
       setError('Cancellation failed. Please try again.');
     } finally {
@@ -72,25 +89,25 @@ export default function BillingStatusPage() {
     }
   };
 
-  if (loading){
+  if (loading) {
     return (
       <>
-      <div className='flex justify-center items-center h-[calc(100vh-70px)]'>
-      <MaxWidthWrapper className='flex justify-center items-center flex-col'>
-        <Loader2 className='w-5 h-5 animate-spin mb-6'/>
-        <p className='text-zinc-600'>Fetching payment details...</p>
-      </MaxWidthWrapper>
-      </div>
+        <div className='flex justify-center items-center h-[calc(100vh-70px)]'>
+          <MaxWidthWrapper className='flex justify-center items-center flex-col'>
+            <Loader2 className='w-5 h-5 animate-spin mb-6' />
+            <p className='text-zinc-600'>Fetching payment details...</p>
+          </MaxWidthWrapper>
+        </div>
       </>
-    )
-  } 
+    );
+  }
+  
   if (error) return <div className="text-red-500">{error}</div>;
   if (!plan) return null;
 
   const { currentPeriodEnd, endingAt, status } = plan;
   const renewDate = dayjs(currentPeriodEnd).format('MMM D, YYYY');
-  const endDate  = dayjs(endingAt).format('MMM D, YYYY');
-
+  const endDate = dayjs(endingAt).format('MMM D, YYYY');
 
   return (
     <div className='flex justify-center items-center h-[calc(80vh-100px)]'>
@@ -98,7 +115,8 @@ export default function BillingStatusPage() {
         <div className='divide-y-2 md:w-full'>
           <h1 className='text-3xl font-semibold text-zinc-800'>Billing status</h1>
           <p className='font-semibold text-xl mt-10 flex flex-row'>
-            You are on the <span className='text-blue-600'>&nbsp;Pro&nbsp;</span>{' '}plan&nbsp;<span ><Gem className='text-blue-600'/></span>
+            You are on the <span className='text-blue-600'>&nbsp;Pro&nbsp;</span>{' '}
+            plan&nbsp;<span><Gem className='text-blue-600' /></span>
           </p>
         </div>
         <div className='divide-y-2 pt-20 md:pt-0 md:w-200 flex-col flex p-6'>
@@ -127,18 +145,48 @@ export default function BillingStatusPage() {
               </Link>{' '}
               to get verified <span className='text-zinc-600'>(one time only)</span>
             </li>
-          ) : String(status) === 'CANCELLED'? <ul className='text-zinc-600 text-sm mt-6 '>*Your plan will get cancelled after the current ending date</ul> : null}
+          ) : String(status) === 'CANCELLED' ? (
+            <ul className='text-zinc-600 text-sm mt-6'>
+              *Your plan will get cancelled after the current ending date
+            </ul>
+          ) : null}
+          
           {String(status) === 'ACTIVE' ? (
-            <Button
-              onClick={() =>{
-                handleCancel()
-                window.location.reload()
-              }}
-              disabled={cancelLoading}
-              className="bg-red-400 hover:bg-red-500 transition-colors cursor-pointer mt-6"
-            >
-              {cancelLoading ? 'Cancelling...' : 'Cancel Subscription'}
-            </Button>
+            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <AlertDialogTrigger asChild>
+                <Button className="bg-red-400 hover:bg-red-500 transition-colors cursor-pointer mt-6">
+                 {cancelLoading? 'Cancelling...': 'Cancel Subscription'}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Cancel Your Pro Subscription?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to cancel your Pro subscription? This action will:
+                    <br />
+                    <br />
+                    • Cancel your subscription at the end of the current billing period ({endDate})
+                    <br />
+                    • Remove access to Pro features after {endDate}
+                    <br />
+                    • This action cannot be easily undone
+                    <br />
+                    <br />
+                    You will continue to have access to Pro features until {endDate}.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Keep Subscription</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleCancel}
+                    disabled={cancelLoading}
+                    className="bg-red-400 hover:bg-red-500"
+                  >
+                    {cancelLoading ? 'Cancelling...' : 'Yes, Cancel my subscription'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           ) : null}
         </div>
         <div className='flex justify-center items-center'></div>

@@ -39,10 +39,10 @@ export default function Home() {
 
       {/* value proposition section */}
       <div>
-        <div className='relative isolate'>
+        <div className='relative isolate -top-10'>
           <div
             aria-hidden='true'
-            className='pointer-events-none absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80'>
+            className='pointer-events-none absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-90'>
             <div
               style={{
                 clipPath:

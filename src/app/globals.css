@@ -3,7 +3,7 @@
 
 /* Dark mode variant configuration */
 @custom-variant dark (&:where(.dark, .dark *));
-
+@plugin "@tailwindcss/typography";
 /* Complete theme configuration */
 @theme {
   /* Container configuration */
