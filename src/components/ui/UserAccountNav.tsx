@@ -21,7 +21,7 @@ interface UserAccountNavProps {
   imageUrl: string | null
 }
 
-const UserAccountNav = async ({
+const UserAccountNav = ({
   email,
   imageUrl,
   name,
