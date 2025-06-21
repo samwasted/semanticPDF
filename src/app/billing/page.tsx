@@ -46,7 +46,7 @@ export default function BillingStatusPage() {
     if (!loading && !queryError) {
       const timer = setTimeout(() => {
         if (!subscriptionData || !subscriptionId) {
-          router.replace('/pricing?origin=billing');
+          // router.replace('/pricing?origin=billing');
         }
       }, 5000);
 
