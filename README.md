@@ -96,6 +96,13 @@ Two-tier subscription model with flexible limits and self-managed billing throug
 - Usage tracking and limits enforcement
 - One-click cancellation with immediate effect
 
+  #Note to test payments
+  - click on upgrade now
+  - fill details (random details work, but you wouldnt get updates through mail or sms)
+  - Enter the credit card no. 5267 3181 8797 5449, add another details randomly, choose save card
+  - Enter otp, you can also skip it
+  - Click on success to confirm payment
+
 ## 🏗️ Key Implementation Details
 
 ### 🔄 RAG Pipeline
