@@ -3,5 +3,5 @@ export default withAuth({
   // options here (e.g., loginPage, publicPaths, isAuthorized)
 });
 export const config = {
-  matcher: ["/dashboard/:path*", "/auth-callback"]
+  matcher: ["/dashboard/:path*",'/billing/:path*','/pricing/:path*', "/auth-callback"]
 }
