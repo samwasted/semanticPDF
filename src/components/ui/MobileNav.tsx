@@ -1,6 +1,7 @@
 'use client'
 
-import { ArrowRight, Menu } from 'lucide-react'
+import { trpc } from '@/_trpc/client'
+import { ArrowRight, Gem, Menu } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -21,6 +22,8 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
       toggleOpen()
     }
   }
+  const { data: subscriptionData } = trpc.checkSubscription.useQuery()
+  const isSubscribed = subscriptionData?.isSubscribed ?? false
 
   return (
     <div className='sm:hidden'>
@@ -80,13 +83,22 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                     Dashboard
                   </Link>
                 </li>
+                {isSubscribed ? (
+                  <Link href="/billing">
+                    Manage Subscription
+                  </Link>
+                ) : (
+                  <Link href="/pricing">
+                    Upgrade <Gem className='text-blue-600 h-4 w-4 ml-1.5' />
+                  </Link>
+                )}
                 <li className='my-3 h-px w-full bg-gray-300' />
                 <li>
-                  <Link
+                  <a
                     className='flex items-center w-full font-semibold'
-                    href='/sign-out'>
+                    href='/api/auth/logout'>
                     Sign out
-                  </Link>
+                  </a>
                 </li>
               </>
             )}
