@@ -12,7 +12,6 @@ import Image from 'next/image'
 import { Icons } from './Icons'
 import Link from 'next/link'
 import { Gem } from 'lucide-react'
-import { getUserSubscriptionPlanRazorpay } from '@/lib/razorpay'
 import { trpc } from '@/_trpc/client'
 
 interface UserAccountNavProps {
@@ -26,9 +25,13 @@ const UserAccountNav = ({
   imageUrl,
   name,
 }: UserAccountNavProps) => {
+
+  const shouldFetch = Boolean(email && name);
   // const subscriptionPlan = await getUserSubscriptionPlan()
-      const { data: subscriptionData } = trpc.checkSubscription.useQuery()
-      const isSubscribed = subscriptionData?.isSubscribed ?? false
+  const { data: subscriptionData } = trpc.checkSubscription.useQuery(undefined, {
+    enabled: shouldFetch
+  })
+  const isSubscribed = subscriptionData?.isSubscribed ?? false
   imageUrl = null
   return (
     <DropdownMenu>
@@ -79,24 +82,17 @@ const UserAccountNav = ({
         </DropdownMenuItem>
 
         <DropdownMenuItem className='cursor-pointer' asChild>
-          {isSubscribed ? (
-            <div
-            onClick={() => {
-                window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/billing`
-              }}>
-              Manage Subscription
-            </div>
-          ) : (
-            <div
-              onClick={() => {
-                window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/pricing`
-              }}
-            >
-              Upgrade{' '}
-              <Gem className='text-blue-600 h-4 w-4 ml-1.5' />
-            </div>
-              
-          )}
+          <DropdownMenuItem className='cursor-pointer' asChild>
+            {isSubscribed ? (
+              <Link href="/billing">
+                Manage Subscription
+              </Link>
+            ) : (
+              <Link href="/pricing">
+                Upgrade <Gem className='text-blue-600 h-4 w-4 ml-1.5' />
+              </Link>
+            )}
+          </DropdownMenuItem>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

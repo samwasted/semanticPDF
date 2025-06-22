@@ -1,7 +1,6 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import Dashboard from "../../components/ui/Dashboard"
 import BillingStatusPage from "@/components/payments/billing";
 export default async function Page() {
   const { getUser } = getKindeServerSession();

@@ -13,7 +13,12 @@ export default function Provider({ children }: PropsWithChildren) {
         trpc.createClient({
             links: [
                 httpBatchLink({
-                    url: `${baseUrl}/api/trpc`
+                    url: `${baseUrl}/api/trpc`,
+                    fetch: (input, init = {}) =>
+            fetch(input, {
+              ...(init as RequestInit),
+              credentials: 'include',     // ← this line ensures your Kinde cookie is sent
+            }),
                 })
             ]
         })
