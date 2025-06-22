@@ -84,12 +84,12 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                   </Link>
                 </li>
                 {isSubscribed ? (
-                  <Link href="/billing">
+                  <Link href="/billing" className='flex items-center w-full font-semibold'>
                     Manage Subscription
                   </Link>
                 ) : (
-                  <Link href="/pricing">
-                    Upgrade <Gem className='text-blue-600 h-4 w-4 ml-1.5' />
+                  <Link href="/pricing" className='flex items-center w-full font-semibold'>
+                    Upgrade <Gem className='text-blue-600 h-4 w-4 ml-1.5'/>
                   </Link>
                 )}
                 <li className='my-3 h-px w-full bg-gray-300' />

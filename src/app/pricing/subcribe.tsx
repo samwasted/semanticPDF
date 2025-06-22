@@ -33,7 +33,6 @@ export default function SubscriptionButton() {
                 subscriptionId: response.razorpay_subscription_id,
                 paymentId: response.razorpay_payment_id,
                 signature: response.razorpay_signature,
-                short_url: response.short_url
               })
             });
             if (!verifyRes.ok) throw new Error("Verification API error");

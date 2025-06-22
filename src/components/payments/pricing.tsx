@@ -1,5 +1,3 @@
-'use client'
-
 import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { PLANS } from "@/config/plan"

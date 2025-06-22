@@ -22,7 +22,7 @@ model User {
   Message Message[]
 
   SubscriptionId String? @unique @map(name: "subscription_id")
-  PriceId String? @unique @map(name: "price_id")
+  PriceId String? @map(name: "price_id")
   CurrentPeriodEnd DateTime? @map(name: "current_period_end")
   status UserSubscriptionStatus @default(INACTIVE) @map(name: "status")
   remainingCount Int? @default(0) @map(name: "remaining_count")
