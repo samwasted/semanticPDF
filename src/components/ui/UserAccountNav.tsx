@@ -80,14 +80,22 @@ const UserAccountNav = ({
 
         <DropdownMenuItem className='cursor-pointer' asChild>
           {isSubscribed ? (
-            <Link href='/billing'>
+            <div
+            onClick={() => {
+                window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/billing`
+              }}>
               Manage Subscription
-            </Link>
+            </div>
           ) : (
-            <Link href='/pricing'>
+            <div
+              onClick={() => {
+                window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/pricing`
+              }}
+            >
               Upgrade{' '}
               <Gem className='text-blue-600 h-4 w-4 ml-1.5' />
-            </Link>
+            </div>
+              
           )}
         </DropdownMenuItem>
 
