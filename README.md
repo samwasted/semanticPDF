@@ -77,6 +77,8 @@ Users upload PDFs through the dashboard interface. Documents are processed, chun
 
 Users can now interact with their uploaded documents through natural language queries. The system provides contextually accurate responses by leveraging the processed embeddings and semantic understanding of the document content.
 
+![Screenshot 2025-06-23 111323](https://github.com/user-attachments/assets/1fbb5354-cbae-423b-b2c5-09e988c92d02)
+
 ## 💰 Subscription Architecture
 
 ### 💎 Pricing Tiers
@@ -96,7 +98,7 @@ Two-tier subscription model with flexible limits and self-managed billing throug
 - Usage tracking and limits enforcement
 - One-click cancellation with immediate effect
 
-  #Note to test payments
+  # Note to test payments
   - click on upgrade now
   - fill details (random details work, but you wouldnt get updates through mail or sms)
   - Enter the credit card no. 5267 3181 8797 5449, add another details randomly, choose save card
